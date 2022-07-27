@@ -172,3 +172,48 @@ def solution3(words, queries):
         answer.append(cnt)
 
     return answer
+
+
+# 100 score (of 100)
+def solution4(words, queries):
+    tree_front = {}
+    tree_rear = {}
+    for word in words:
+        size = len(word)
+        tree_front[size] = tree_front.get(size, {})
+        curr = tree_front[size]
+        for ch in word:
+            curr['count'] = curr.get('count', 0) + 1
+            curr[ch] = curr.get(ch, {})
+            curr = curr[ch]
+        tree_rear[size] = tree_rear.get(size, {})
+        curr = tree_rear[size]
+        for ch in word[::-1]:
+            curr['count'] = curr.get('count', 0) + 1
+            curr[ch] = curr.get(ch, {})
+            curr = curr[ch]
+    answer = []
+    for query in queries:
+        size = len(query)
+        answer.append(0)
+        if query[0] != '?':
+            if size in tree_front:
+                curr = tree_front[size]
+                for ch in query:
+                    if ch == '?':
+                        answer[-1] = curr['count']
+                        break
+                    if ch not in curr:
+                        break
+                    curr = curr[ch]
+        else:
+            if size in tree_rear:
+                curr = tree_rear[size]
+                for ch in query[::-1]:
+                    if ch == '?':
+                        answer[-1] = curr['count']
+                        break
+                    if ch not in curr:
+                        break
+                    curr = curr[ch]
+    return answer
